@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, use } from 'react'
 import Wrapper from './Wrapper';
 import Link from 'next/link';
 import Menu from './Menu';
@@ -14,7 +14,29 @@ const Header = (props) => {
     const [mobileMenu, setMobileMenu] = useState(false);
     const [showCatMenu, setShowCatMenu] = useState(false);
     const [show, setShow] = useState('translate-y-0');
-    const [lastScrollY, setLastScrollY] = useState(0)
+    const [lastScrollY, setLastScrollY] = useState(0);
+
+    const controlNavbar = () => {
+        if (window.scrollY > 200) {
+            if(window.scrollY > lastScrollY && !mobileMenu ){
+                setShow("-translate-y-[80px]")
+            } else {
+                setShow('shadow-sm')
+            }
+        }
+        else {
+            setShow('translate-y-0')
+        }
+        setLastScrollY(window.scrollY)
+    }
+
+    useEffect(() => {
+        window.addEventListener('scroll', controlNavbar);
+        return () => {
+            window.removeEventListener('scroll', controlNavbar)
+        }
+    }, [lastScrollY])
+
 
     return (
         <div className={`w-full h-[50px] md:[80px] bg-white flex items-center justify-between z-20 sticky top-0 transition-transform duration-300 ${show}`}>
@@ -24,7 +46,7 @@ const Header = (props) => {
                 </Link>
                 <Menu showCatMenu={showCatMenu} setShowCatMenu={setShowCatMenu} />
 
-               {mobileMenu &&  <MenuMobile showCatMenu={showCatMenu} setShowCatMenu={setShowCatMenu} setMobileMenu={setMobileMenu}/>}
+                {mobileMenu && <MenuMobile showCatMenu={showCatMenu} setShowCatMenu={setShowCatMenu} setMobileMenu={setMobileMenu} />}
 
                 <div className='flex items-center gap-2 text-black'>
                     {/*Icon start */}
